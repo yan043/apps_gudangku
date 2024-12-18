@@ -5,15 +5,15 @@
 /.nova
 /.vscode
 /.zed
-# /.env
+/.env
 
 /node_modules
 /storage
-# /vendor
+/vendor
 
-# .env
-# .env.backup
-# .env.production
+.env
+.env.backup
+.env.production
 
 composer.lock
 package-lock.json
