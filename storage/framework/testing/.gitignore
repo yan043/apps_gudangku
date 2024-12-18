@@ -1,0 +1,19 @@
+/.phpunit.cache
+/.vscode
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+# /.env
+
+/node_modules
+/storage
+# /vendor
+
+# .env
+# .env.backup
+# .env.production
+
+composer.lock
+package-lock.json
