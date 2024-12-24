@@ -13,10 +13,11 @@ class UserModel extends Authenticatable
     protected $fillable = [
         'nik',
         'name',
-        'password',
+        'gender',
         'level_id',
         'address',
         'phone',
+        'password',
         'remember_token',
         'ip_address',
         'login_at',

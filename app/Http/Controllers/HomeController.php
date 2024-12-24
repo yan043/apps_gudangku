@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Session;
 
-date_default_timezone_set("Asia/Makassar");
-
 class HomeController extends Controller
 {
     public function index()
@@ -15,6 +13,6 @@ class HomeController extends Controller
             return redirect()->route('login')->withErrors(['login' => 'Harap login terlebih dahulu.']);
         }
 
-        return view('home');
+        return view('pages.home');
     }
 }

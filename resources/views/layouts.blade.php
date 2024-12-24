@@ -55,38 +55,32 @@
             <li class="menu-header small text-uppercase">
               <span class="menu-header-text">Master</span>
             </li>
-            <li class="menu-item {{ Request::is('master/category') ? 'active' : '' }}">
-                <a href="/master/category" class="menu-link">
+            <li class="menu-item {{ Request::is('master/categories') ? 'active' : '' }}">
+                <a href="/master/categories" class="menu-link">
                   <i class="menu-icon tf-icons bx bx-category"></i>
                   <div data-i18n="Kategori">Kategori</div>
                 </a>
             </li>
-            <li class="menu-item {{ Request::is('master/item') ? 'active' : '' }}">
-                <a href="/master/item" class="menu-link">
+            <li class="menu-item {{ Request::is('master/products') ? 'active' : '' }}">
+                <a href="/master/products" class="menu-link">
                   <i class="menu-icon tf-icons bx bx-package"></i>
-                  <div data-i18n="Barang">Barang</div>
+                  <div data-i18n="Barang">Produk / Barang</div>
                 </a>
             </li>
-            {{-- <li class="menu-item {{ Request::is('master/supplier') ? 'active' : '' }}">
-                <a href="/master/supplier" class="menu-link">
-                  <i class="menu-icon tf-icons bx bx-face"></i>
-                  <div data-i18n="Supplier">Supplier</div>
-                </a>
-            </li> --}}
 
             <li class="menu-header small text-uppercase">
                 <span class="menu-header-text">Transaksi</span>
-            </li>
-            <li class="menu-item {{ Request::is('transaction/goods-receipt') ? 'active' : '' }}">
-                <a href="/transaction/goods-receipt" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-receipt"></i>
-                <div data-i18n="Penerimaan Barang">Penerimaan Barang</div>
-                </a>
             </li>
             <li class="menu-item {{ Request::is('transaction/purchase-goods') ? 'active' : '' }}">
                 <a href="/transaction/purchase-goods" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-purchase-tag"></i>
                 <div data-i18n="Pembelian Barang">Pembelian Barang</div>
+                </a>
+            </li>
+            <li class="menu-item {{ Request::is('transaction/goods-receipt') ? 'active' : '' }}">
+                <a href="/transaction/goods-receipt" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-receipt"></i>
+                <div data-i18n="Penerimaan Barang">Penerimaan Barang</div>
                 </a>
             </li>
             <li class="menu-item {{ Request::is('transaction/stock-transactions') ? 'active' : '' }}">

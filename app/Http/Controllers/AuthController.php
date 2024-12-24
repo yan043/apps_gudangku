@@ -67,6 +67,7 @@ class AuthController extends Controller
             Session::put([
                 'nik'            => $user->nik,
                 'name'           => $user->name,
+                'gender'         => $user->gender,
                 'level_id'       => $user->level->id,
                 'level_name'     => $user->level->name,
                 'address'        => $user->address,
