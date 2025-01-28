@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
@@ -20,37 +19,46 @@ class TransactionController extends Controller
     public function purchase_goods_store(Request $request)
     {
         $request->validate([
-            'supplier_id'        => 'required|exists:employees,id',
+            'supplier_id'        => 'required|exists:tb_employees,id',
             'purchase_date'      => 'required|date',
             'items'              => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.product_id' => 'required|exists:tb_products,id',
             'items.*.qty'        => 'required|integer|min:1',
             'items.*.price'      => 'required|numeric|min:0',
         ]);
 
-        $purchase = Purchase::create([
-            'supplier_id'   => $request->supplier_id,
+        $purchaseId = DB::table('tb_purchases')->insertGetId([
+            'created_by'    => $request->supplier_id,
             'purchase_date' => $request->purchase_date,
-            'total_price'   => 0,
+            'total_amount'  => 0,
+            'created_at'    => now(),
         ]);
 
-        $totalPrice = 0;
+        $totalAmount = 0;
 
         foreach ($request->items as $item)
         {
             $subtotal = $item['qty'] * $item['price'];
-            PurchaseItem::create([
-                'purchase_id' => $purchase->id,
+
+            DB::table('tb_purchase_items')->insert([
+                'purchase_id' => $purchaseId,
                 'product_id'  => $item['product_id'],
                 'qty'         => $item['qty'],
                 'price'       => $item['price'],
+                'created_at'  => now(),
             ]);
-            $totalPrice += $subtotal;
+
+            $totalAmount += $subtotal;
         }
 
-        $purchase->update(['total_price' => $totalPrice]);
+        DB::table('tb_purchases')
+            ->where('id', $purchaseId)
+            ->update([
+                'total_amount' => $totalAmount,
+                'updated_at'   => now(),
+            ]);
 
-        return redirect()->route('purchases.create')->with('success', 'Pembelian berhasil disimpan.');
+        return redirect()->route('transaction.purchase_goods')->with('success', 'Pembelian berhasil disimpan.');
     }
 
     public function goods_receipt()
@@ -65,35 +73,42 @@ class TransactionController extends Controller
     public function goods_receipt_store(Request $request)
     {
         $request->validate([
-            'supplier_id'        => 'required|exists:employees,id',
+            'supplier_id'        => 'required|exists:tb_employees,id',
             'receipt_date'       => 'required|date',
             'items'              => 'required|array|min:1',
-            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.product_id' => 'required|exists:tb_products,id',
             'items.*.qty'        => 'required|integer|min:1',
         ]);
 
-        $receipt = Receipt::create([
-            'supplier_id'  => $request->supplier_id,
+        $receiptId = DB::table('tb_receipts')->insertGetId([
+            'created_by'   => $request->supplier_id,
             'receipt_date' => $request->receipt_date,
             'total_qty'    => 0,
+            'created_at'   => now(),
         ]);
 
         $totalQty = 0;
 
         foreach ($request->items as $item)
         {
-            ReceiptItem::create([
-                'receipt_id' => $receipt->id,
+            DB::table('tb_receipt_items')->insert([
+                'receipt_id' => $receiptId,
                 'product_id' => $item['product_id'],
                 'qty'        => $item['qty'],
+                'created_at' => now(),
             ]);
 
             $totalQty += $item['qty'];
         }
 
-        $receipt->update(['total_qty' => $totalQty]);
+        DB::table('tb_receipts')
+            ->where('id', $receiptId)
+            ->update([
+                'total_qty'  => $totalQty,
+                'updated_at' => now(),
+            ]);
 
-        return redirect()->route('receipts.create')->with('success', 'Penerimaan barang berhasil disimpan.');
+        return redirect()->route('transaction.goods_receipt')->with('success', 'Penerimaan barang berhasil disimpan.');
     }
 
     public function stock_transactions()
@@ -104,10 +119,10 @@ class TransactionController extends Controller
         ->select(
             'tb_products.id',
             'tb_products.name',
-            'tb_products.initial_stock',
+            'tb_products.quantity',
             DB::raw('COALESCE(purchases.total_purchase, 0) as total_purchase'),
             DB::raw('COALESCE(receipts.total_receipt, 0) as total_receipt'),
-            DB::raw('tb_products.initial_stock + COALESCE(purchases.total_purchase, 0) + COALESCE(receipts.total_receipt, 0) as available_stock')
+            DB::raw('tb_products.quantity + COALESCE(purchases.total_purchase, 0) + COALESCE(receipts.total_receipt, 0) as available_stock')
         )
         ->get();
 
